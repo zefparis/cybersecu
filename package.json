@@ -1,0 +1,13 @@
+{
+  "name": "cyber-secu",
+  "packageManager": "yarn@3.6.4",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "latest"
+  },
+  "scripts": {
+    "build:css": "tailwindcss -i ./static/src/input.css -o ./static/css/styles.css --minify",
+    "dev:css": "tailwindcss -i ./static/src/input.css -o ./static/css/styles.css --watch"
+  }
+}

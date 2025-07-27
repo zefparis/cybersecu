@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================
+   Custom Styles Additionnels
+   ======================== */
+
+/* Security Score Bar */
+/* Security Score Bar */
+#securityScoreBar {
+  height: 1rem;
+  background-color: rgb(34 197 94); /* bg-green-500 */
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 500ms;
+  width: 0%;
+}
+
+/* Progress Bar */
+#progressBar {
+  height: 1rem;
+  background-color: rgb(37 99 235); /* bg-blue-600 */
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 500ms;
+  width: 0%;
+}
+
+/* Dark mode override (si pas automatique) */
+html.dark {
+  background-color: #0f172a;
+  color: white;
+}

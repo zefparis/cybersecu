@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}CyberCrim – IA-Solution | Outils de Sécurité{% endblock %}
+
+{% block head %}
+<style>
+    .tool-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .tool-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .tool-icon {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .tool-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+    }
+    
+    .coming-soon {
+        filter: grayscale(0.8) opacity(0.8);
+        position: relative;
+    }
+    
+    .coming-soon::after {
+        content: 'Bientôt disponible';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        transform: translateY(-50%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .coming-soon:hover::after {
+        opacity: 1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-b from-dark to-dark-800 pt-24 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">Nos <span class="text-primary">Outils</span> de Sécurité</h1>
+        <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+            Découvrez notre suite d'outils de cybersécurité conçus pour protéger votre entreprise contre les menaces modernes.
+        </p>
+    </div>
+</section>
+
+<!-- Tools Grid -->
+<section class="py-16 bg-dark-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- VulnScanner -->
+            <div class="tool-card bg-dark-700/50 border border-dark-600 rounded-2xl p-8 relative overflow-hidden">
+                <div class="tool-icon bg-primary/10 text-primary">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">VulnScanner</h3>
+                <p class="text-gray-400 mb-4">Scanner de vulnérabilités avancé pour identifier les failles de sécurité dans vos applications web et réseaux.</p>
+                <div class="flex flex-wrap gap-2 mt-4">
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">OWASP Top 10</span>
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Automatisé</span>
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Rapports PDF/JSON</span>
+                </div>
+                <div class="mt-6">
+                    <a href="{{ url_for('demo') }}" class="inline-flex items-center text-primary font-medium hover:text-primary/80 transition-colors">
+                        Essayer la démo
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- LogShield -->
+            <div class="tool-card bg-dark-700/50 border border-dark-600 rounded-2xl p-8 relative overflow-hidden">
+                <div class="tool-icon bg-blue-500/10 text-blue-500">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6h2m7-6h2m2 6h2m-8 0a4 4 0 01-8 0V9a4 4 0 118 0v6zm8 0a4 4 0 01-4 4h-4a4 4 0 01-4-4V9a4 4 0 018 0v6z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">LogShield</h3>
+                <p class="text-gray-400 mb-4">Surveillance et analyse des journaux en temps réel pour détecter les activités suspectes et les attaques potentielles.</p>
+                <div class="flex flex-wrap gap-2 mt-4">
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Temps réel</span>
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Alertes personnalisées</span>
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Corrélation d'événements</span>
+                </div>
+                <div class="mt-6">
+                    <a href="#" class="inline-flex items-center text-blue-400 font-medium hover:text-blue-300 transition-colors">
+                        En savoir plus
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- PhishAnalyzer -->
+            <div class="tool-card bg-dark-700/50 border border-dark-600 rounded-2xl p-8 relative overflow-hidden">
+                <div class="tool-icon bg-purple-500/10 text-purple-500">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">PhishAnalyzer</h3>
+                <p class="text-gray-400 mb-4">Détectez et analysez les tentatives de phishing avec notre outil d'analyse d'URL et de pièces jointes.</p>
+                <div class="flex flex-wrap gap-2 mt-4">
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Analyse d'URL</span>
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Détection de menaces</span>
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Base de données à jour</span>
+                </div>
+                <div class="mt-6">
+                    <a href="{{ url_for('demo') }}" class="inline-flex items-center text-purple-400 font-medium hover:text-purple-300 transition-colors">
+                        Essayer la démo
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- CodeGuard -->
+            <div class="tool-card bg-dark-700/50 border border-dark-600 rounded-2xl p-8 relative overflow-hidden coming-soon">
+                <span class="tool-badge bg-yellow-500/20 text-yellow-400">Bientôt disponible</span>
+                <div class="tool-icon bg-yellow-500/10 text-yellow-500">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">CodeGuard</h3>
+                <p class="text-gray-400 mb-4">Analyse statique de code pour identifier les vulnérabilités de sécurité dans votre code source.</p>
+                <div class="flex flex-wrap gap-2 mt-4">
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Multi-langage</span>
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Intégration CI/CD</span>
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Rapports détaillés</span>
+                </div>
+            </div>
+            
+            <!-- NetShield -->
+            <div class="tool-card bg-dark-700/50 border border-dark-600 rounded-2xl p-8 relative overflow-hidden coming-soon">
+                <span class="tool-badge bg-yellow-500/20 text-yellow-400">Bientôt disponible</span>
+                <div class="tool-icon bg-green-500/10 text-green-500">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">NetShield</h3>
+                <p class="text-gray-400 mb-4">Pare-feu nouvelle génération avec protection avancée contre les menaces réseau et les attaques DDoS.</p>
+                <div class="flex flex-wrap gap-2 mt-4">
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Protection DDoS</span>
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Filtrage avancé</span>
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Surveillance 24/7</span>
+                </div>
+            </div>
+            
+            <!-- IAM Sentinel -->
+            <div class="tool-card bg-dark-700/50 border border-dark-600 rounded-2xl p-8 relative overflow-hidden coming-soon">
+                <span class="tool-badge bg-yellow-500/20 text-yellow-400">Bientôt disponible</span>
+                <div class="tool-icon bg-red-500/10 text-red-500">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">IAM Sentinel</h3>
+                <p class="text-gray-400 mb-4">Gestion des identités et des accès avec authentification forte et contrôle des privilèges.</p>
+                <div class="flex flex-wrap gap-2 mt-4">
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">MFA</span>
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">SSO</span>
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">RBAC</span>
+                    <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Audit</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-16 bg-gradient-to-r from-dark-800 to-dark-900">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6">Intéressé par nos outils ?</h2>
+        <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            Contactez-nous pour une démonstration personnalisée ou pour en savoir plus sur nos solutions de cybersécurité.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{{ url_for('contact') }}" class="bg-primary hover:bg-primary/90 text-dark font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 inline-flex items-center justify-center">
+                Nous contacter
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+            </a>
+            <a href="{{ url_for('demo') }}" class="border border-primary text-primary hover:bg-primary/10 font-medium py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 inline-flex items-center justify-center">
+                Essayer la démo
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add animation on scroll for tool cards
+    const animateOnScroll = () => {
+        const elements = document.querySelectorAll('.tool-card');
+        elements.forEach((element, index) => {
+            const elementPosition = element.getBoundingClientRect().top;
+            const screenPosition = window.innerHeight / 1.2;
+            
+            if (elementPosition < screenPosition) {
+                setTimeout(() => {
+                    element.classList.add('animate-fadeInUp');
+                }, 100 * index);
+            }
+        });
+    };
+    
+    // Run once on page load
+    window.addEventListener('load', animateOnScroll);
+    // Run on scroll
+    window.addEventListener('scroll', animateOnScroll);
+</script>
+{% endblock %}

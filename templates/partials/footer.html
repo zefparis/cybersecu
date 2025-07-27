@@ -1,0 +1,17 @@
+<footer class="bg-dark-800 text-gray-400 py-8 border-t border-gray-700 mt-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+      
+      <div class="text-sm">
+        &copy; {{ now.year }} <strong>CyberCrim</strong> · Propulsé par <a href="https://ia-solution.eu" class="text-blue-400 hover:underline">IA-Solution</a>
+      </div>
+
+      <div class="flex space-x-4">
+        <a href="{{ url_for('index') }}" class="hover:text-white">Accueil</a>
+        <a href="{{ url_for('demo') }}" class="hover:text-white">Démo</a>
+        <a href="{{ url_for('contact') }}" class="hover:text-white">Contact</a>
+        <a href="https://github.com/zefparis" target="_blank" class="hover:text-white">GitHub</a>
+      </div>
+    </div>
+  </div>
+</footer>

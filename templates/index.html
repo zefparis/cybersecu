@@ -1,0 +1,409 @@
+{% extends "base.html" %}
+
+{% block title %}CyberCrim – IA-Solution | Cybersécurité Proactive{% endblock %}
+
+{% block head %}
+<style>
+    /* Base Styles */
+    .hero-gradient {
+        background: linear-gradient(135deg, #0e0e12 0%, #1a1a1f 100%);
+    }
+    
+    .feature-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .glow {
+        text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+    }
+    
+    .tech-grid {
+        background-image: 
+            linear-gradient(rgba(20, 20, 30, 0.95), rgba(20, 20, 30, 0.95)),
+            url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l.83.828-1.415 1.415L51.8 0h2.827zM5.373 0l-3.242 3.243L1.717 1.828 2.544.002 5.374 0zM48.97 0l-8.486 8.485-1.415-1.414L47.556 0h1.414zm-12.728 0l-5.657 5.657-1.414-1.414L34.828 0h1.414zM32.9 0L20.573 12.328l-1.414-1.414L31.485 0h1.414zM21.313 0H5.374l3.242 3.243 1.415-1.415h7.07l-1.06-1.06-5.657-5.657L21.313 0zm-7.07 0l-3.535 3.535-1.415-1.414L11.313 0h2.828zM54.627 60h-7.07l3.242-3.243 1.415 1.415L54.63 60zM5.372 60l8.486-8.485-1.414-1.415L3.96 58.586 2.544 60h2.828zm12.728 0l5.656-5.657-1.414-1.414-5.656 5.657v1.414zM32.9 60H16.97l3.242-3.243 1.414 1.415L32.9 60zm20.485-60h-2.828l3.243 3.243 1.414-1.415L53.385 0zM0 0h2.828L0 2.828V0zm0 60h2.828L0 57.172V60zm60-60v2.828L57.173 0H60zm0 60v-2.828L57.173 60H60z' fill='%23333' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+    }
+    
+    /* Animations */
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes blob {
+        0% { transform: translate(0px, 0px) scale(1); }
+        33% { transform: translate(30px, -50px) scale(1.1); }
+        66% { transform: translate(-20px, 20px) scale(0.9); }
+        100% { transform: translate(0px, 0px) scale(1); }
+    }
+    
+    .floating {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    .animate-blob {
+        animation: blob 7s infinite;
+    }
+    
+    .animation-delay-2000 {
+        animation-delay: 2s;
+    }
+    
+    .animation-delay-4000 {
+        animation-delay: 4s;
+    }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #1a1a1f;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #3a3a4a;
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #4a4a5a;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-gradient min-h-screen flex items-center pt-20 pb-24 relative overflow-hidden">
+    <!-- Animated background elements -->
+    <div class="absolute inset-0 overflow-hidden opacity-20">
+        <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/20 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+        <div class="absolute top-1/3 right-1/4 w-72 h-72 bg-accent/20 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+        <div class="absolute bottom-1/4 left-1/3 w-80 h-80 bg-secondary/20 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="text-center md:text-left">
+                <div class="inline-block px-4 py-2 mb-6 bg-primary/10 text-primary rounded-full text-sm font-medium">
+                    <span class="relative flex h-3 w-3 mr-2 inline-block">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                    </span>
+                    Sécurité en temps réel
+                </div>
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+                    <span class="text-white">Protégez votre</span> <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">système</span>
+                </h1>
+                <p class="text-xl text-gray-300 mb-10 max-w-xl mx-auto md:mx-0">
+                    Protégez vos actifs numériques avec des solutions d'IA avancées pour une sécurité informatique de pointe. Détectez et prévenez les menaces en temps réel avant qu'elles n'affectent votre entreprise.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                    <a href="{{ url_for('demo') }}" class="px-8 py-4 bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 text-center">
+                        Essai gratuit
+                    </a>
+                    <a href="#features" class="px-8 py-4 bg-transparent border-2 border-primary text-primary hover:bg-primary/10 font-semibold rounded-lg transition-all duration-300 text-center">
+                        En savoir plus
+                    </a>
+                </div>
+                <div class="mt-8 flex items-center text-sm text-gray-400">
+                    <div class="flex -space-x-2 mr-3">
+                        <img class="w-8 h-8 rounded-full border-2 border-dark-800" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Client 1">
+                        <img class="w-8 h-8 rounded-full border-2 border-dark-800" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Client 2">
+                        <img class="w-8 h-8 rounded-full border-2 border-dark-800" src="https://randomuser.me/api/portraits/women/68.jpg" alt="Client 3">
+                    </div>
+                    <span>Rejoignez <span class="text-white font-medium">500+ entreprises</span> qui nous font confiance</span>
+                </div>
+                    <a href="{{ url_for('demo') }}" class="bg-primary hover:bg-primary/90 text-dark font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 inline-flex items-center justify-center">
+                        Essayer un scan maintenant
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+                    <a href="{{ url_for('services') }}" class="border border-primary text-primary hover:bg-primary/10 font-medium py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 inline-flex items-center justify-center">
+                        Nos services
+                    </a>
+                </div>
+                <div class="mt-10 flex flex-wrap justify-center md:justify-start gap-6">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-primary">100%</div>
+                        <div class="text-sm text-gray-400">Satisfaction</div>
+                    </div>
+                    <div class="h-12 w-px bg-gray-700"></div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-primary">24/7</div>
+                        <div class="text-sm text-gray-400">Support</div>
+                    </div>
+                    <div class="h-12 w-px bg-gray-700"></div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-primary">100+</div>
+                        <div class="text-sm text-gray-400">Clients protégés</div>
+                    </div>
+                </div>
+            </div>
+            <div class="relative hidden md:block">
+                <div class="relative z-10">
+                    <div class="absolute -top-10 -left-10 w-64 h-64 bg-primary/20 rounded-full filter blur-3xl opacity-70"></div>
+                    <div class="absolute -bottom-10 -right-10 w-64 h-64 bg-accent/20 rounded-full filter blur-3xl opacity-70"></div>
+                    <div class="relative z-10 bg-dark-800/50 backdrop-blur-sm border border-dark-600 rounded-2xl p-6 shadow-2xl">
+                        <div class="flex items-center mb-4">
+                            <div class="flex space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                                <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                                <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                            </div>
+                            <div class="text-xs text-gray-400 ml-4">scan_owasp.py</div>
+                        </div>
+                        <div class="font-mono text-sm text-gray-300 overflow-hidden">
+                            <div class="mb-2"><span class="text-green-400">$</span> python scan_owasp.py --target example.com</div>
+                            <div class="text-gray-500">[<span class="text-yellow-400">*</span>] Starting OWASP ZAP scan...</div>
+                            <div class="text-gray-500">[<span class="text-blue-400">+</span>] Scanning: https://example.com</div>
+                            <div class="text-gray-500">[<span class="text-blue-400">+</span>] Detected: WordPress 5.8.1</div>
+                            <div class="text-gray-500">[<span class="text-red-400">!</span>] Critical: SQL Injection found in /wp-login.php</div>
+                            <div class="text-gray-500">[<span class="text-yellow-400">!</span>] Warning: Outdated jQuery (1.12.4) detected</div>
+                            <div class="text-gray-500">[<span class="text-green-400">+</span>] Scan completed in 2m 34s</div>
+                            <div class="mt-2"><span class="text-green-400">$</span> <span class="animate-pulse">_</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="absolute bottom-8 left-0 right-0 text-center">
+        <a href="#features" class="inline-block animate-bounce" aria-label="Aller à la section Fonctionnalités">
+            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </a>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-24 bg-dark-800 relative overflow-hidden">
+    <!-- Background elements -->
+    <div class="absolute top-0 left-0 w-full h-full opacity-5">
+        <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-primary rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+        <div class="absolute bottom-1/3 right-1/4 w-72 h-72 bg-accent rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-20">
+            <span class="inline-block px-4 py-2 mb-4 bg-primary/10 text-primary text-sm font-medium rounded-full">Nos Solutions</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-6">Sécurité <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Intelligente</span></h2>
+            <div class="w-24 h-1 bg-gradient-to-r from-primary to-accent mx-auto mb-8 rounded-full"></div>
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                Protégez votre entreprise avec nos solutions de cybersécurité avancées, conçues pour détecter et prévenir les menaces en temps réel avant qu'elles n'affectent vos opérations.
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="feature-card group bg-dark-700/30 border border-dark-600 rounded-2xl p-8 hover:border-primary/50 transition-all hover:bg-gradient-to-br from-dark-700/30 to-dark-800/30 relative overflow-hidden">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-500 group-hover:duration-200"></div>
+                <div class="relative">
+                    <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary/20 transition-colors">
+                        <svg class="w-8 h-8 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white group-hover:text-primary transition-colors">Protection Avancée</h3>
+                    <p class="text-gray-400 group-hover:text-gray-300 transition-colors">Détection et prévention des menaces en temps réel grâce à notre technologie d'IA avancée qui apprend et s'adapte constamment.</p>
+                    <a href="#" class="mt-4 inline-flex items-center text-primary text-sm font-medium group-hover:underline">
+                        En savoir plus
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="feature-card group bg-dark-700/30 border border-dark-600 rounded-2xl p-8 hover:border-primary/50 transition-all hover:bg-gradient-to-br from-dark-700/30 to-dark-800/30 relative overflow-hidden">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-500 group-hover:duration-200"></div>
+                <div class="relative">
+                    <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary/20 transition-colors">
+                        <svg class="w-8 h-8 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white group-hover:text-primary transition-colors">Chiffrement de Bout en Bout</h3>
+                    <p class="text-gray-400 group-hover:text-gray-300 transition-colors">Protégez vos données sensibles avec un chiffrement de niveau militaire pour une sécurité maximale.</p>
+                    <a href="#" class="mt-4 inline-flex items-center text-primary text-sm font-medium group-hover:underline">
+                        En savoir plus
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="feature-card group bg-dark-700/30 border border-dark-600 rounded-2xl p-8 hover:border-primary/50 transition-all hover:bg-gradient-to-br from-dark-700/30 to-dark-800/30 relative overflow-hidden">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-500 group-hover:duration-200"></div>
+                <div class="relative">
+                    <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary/20 transition-colors">
+                        <svg class="w-8 h-8 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white group-hover:text-primary transition-colors">Surveillance 24/7</h3>
+                    <p class="text-gray-400 group-hover:text-gray-300 transition-colors">Surveillance continue de votre infrastructure pour détecter et répondre aux menaces en temps réel.</p>
+                    <a href="#" class="mt-4 inline-flex items-center text-primary text-sm font-medium group-hover:underline">
+                        En savoir plus
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="feature-card group bg-dark-700/30 border border-dark-600 rounded-2xl p-8 hover:border-primary/50 transition-all hover:bg-gradient-to-br from-dark-700/30 to-dark-800/30 relative overflow-hidden">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-500 group-hover:duration-200"></div>
+                <div class="relative">
+                    <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary/20 transition-colors">
+                        <svg class="w-8 h-8 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white group-hover:text-primary transition-colors">Conformité RGPD</h3>
+                    <p class="text-gray-400 group-hover:text-gray-300 transition-colors">Solutions conformes aux réglementations en vigueur pour protéger les données de vos utilisateurs.</p>
+                    <a href="#" class="mt-4 inline-flex items-center text-primary text-sm font-medium group-hover:underline">
+                        En savoir plus
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Conformité RGPD</h3>
+                <p class="text-gray-400">Solutions conformes aux réglementations en vigueur pour protéger les données de vos utilisateurs.</p>
+            </div>
+            
+            <!-- Feature 5 -->
+            <div class="feature-card bg-dark-700/50 border border-dark-600 rounded-2xl p-8 hover:border-primary/50 transition-all">
+                <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Mobile First</h3>
+                <p class="text-gray-400">Protégez tous les appareils de votre entreprise, des ordinateurs de bureau aux appareils mobiles.</p>
+            </div>
+            
+            <!-- Feature 6 -->
+            <div class="feature-card bg-dark-700/50 border border-dark-600 rounded-2xl p-8 hover:border-primary/50 transition-all">
+                <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Rapports Détaillés</h3>
+                <p class="text-gray-400">Obtenez des rapports complets sur la sécurité de votre infrastructure et les actions correctives recommandées.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-gradient-to-r from-dark-800 to-dark-900">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6">Prêt à sécuriser votre entreprise ?</h2>
+        <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            Découvrez comment nos solutions de cybersécurité sur mesure peuvent protéger votre entreprise contre les menaces actuelles et futures.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{{ url_for('contact') }}" class="bg-primary hover:bg-primary/90 text-dark font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 inline-flex items-center justify-center">
+                Nous contacter
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+            </a>
+            <a href="{{ url_for('demo') }}" class="border border-primary text-primary hover:bg-primary/10 font-medium py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 inline-flex items-center justify-center">
+                Voir la démo
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Technologies Section -->
+<section class="py-20 tech-grid">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Technologies <span class="text-primary">Utilisées</span></h2>
+            <div class="w-20 h-1 bg-gradient-to-r from-primary to-accent mx-auto mb-6"></div>
+            <p class="text-lg text-gray-400 max-w-3xl mx-auto">
+                Nous utilisons les dernières technologies pour vous offrir des solutions de sécurité à la pointe de l'innovation.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
+            <div class="p-4 rounded-xl bg-dark-700/50 border border-dark-600 hover:border-primary/50 transition-all">
+                <img src="{{ url_for('static', filename='img/tech/python.svg') }}" alt="Python" class="h-16 mx-auto opacity-80 hover:opacity-100 transition-opacity">
+                <p class="mt-2 text-center text-gray-300">Python</p>
+            </div>
+            <div class="p-4 rounded-xl bg-dark-700/50 border border-dark-600 hover:border-primary/50 transition-all">
+                <img src="{{ url_for('static', filename='img/tech/owasp.svg') }}" alt="OWASP" class="h-16 mx-auto opacity-80 hover:opacity-100 transition-opacity">
+                <p class="mt-2 text-center text-gray-300">OWASP</p>
+            </div>
+            <div class="p-4 rounded-xl bg-dark-700/50 border border-dark-600 hover:border-primary/50 transition-all">
+                <img src="{{ url_for('static', filename='img/tech/ai.svg') }}" alt="AI" class="h-16 mx-auto opacity-80 hover:opacity-100 transition-opacity">
+                <p class="mt-2 text-center text-gray-300">Intelligence Artificielle</p>
+            </div>
+            <div class="p-4 rounded-xl bg-dark-700/50 border border-dark-600 hover:border-primary/50 transition-all">
+                <img src="{{ url_for('static', filename='img/tech/cloud.svg') }}" alt="Cloud" class="h-16 mx-auto opacity-80 hover:opacity-100 transition-opacity">
+                <p class="mt-2 text-center text-gray-300">Cloud Computing</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // Close mobile menu if open
+                const mobileMenu = document.getElementById('mobile-menu');
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                }
+            }
+        });
+    });
+    
+    // Add animation on scroll
+    const animateOnScroll = () => {
+        const elements = document.querySelectorAll('.feature-card, .tech-item');
+        elements.forEach(element => {
+            const elementPosition = element.getBoundingClientRect().top;
+            const screenPosition = window.innerHeight / 1.3;
+            
+            if (elementPosition < screenPosition) {
+                element.classList.add('animate-fadeInUp');
+            }
+        });
+    };
+    
+    // Run once on page load
+    window.addEventListener('load', animateOnScroll);
+    // Run on scroll
+    window.addEventListener('scroll', animateOnScroll);
+</script>
+{% endblock %}

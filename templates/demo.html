@@ -1,0 +1,1278 @@
+{% extends "base.html" %}
+
+{% block title %}CyberCrim – IA-Solution | Démo Scanner OWASP{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<style>
+    .scan-form {
+        background: linear-gradient(145deg, #0f0f13 0%, #1a1a1f 100%);
+        border: 1px solid rgba(0, 255, 157, 0.1);
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+    }
+    
+    .scan-form:hover {
+        border-color: rgba(0, 255, 157, 0.2);
+        box-shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.6);
+    }
+    
+    .scan-results {
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transform: translateY(20px);
+    }
+    
+    .scan-results.visible {
+        max-height: 10000px;
+        opacity: 1;
+        margin-top: 2rem;
+        transform: translateY(0);
+    }
+    
+    .severity-high { 
+        border-left: 4px solid #ef4444;
+        background: linear-gradient(90deg, rgba(239, 68, 68, 0.03) 0%, rgba(239, 68, 68, 0.01) 100%);
+    }
+    .severity-medium { 
+        border-left: 4px solid #f59e0b;
+        background: linear-gradient(90deg, rgba(245, 158, 11, 0.03) 0%, rgba(245, 158, 11, 0.01) 100%);
+    }
+    .severity-low { 
+        border-left: 4px solid #3b82f6;
+        background: linear-gradient(90deg, rgba(59, 130, 246, 0.03) 0%, rgba(59, 130, 246, 0.01) 100%);
+    }
+    .severity-info { 
+        border-left: 4px solid #6b7280;
+        background: linear-gradient(90deg, rgba(107, 114, 128, 0.03) 0%, rgba(107, 114, 128, 0.01) 100%);
+    }
+    
+    .severity-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.35rem 0.85rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: all 0.2s ease;
+    }
+    
+    .severity-badge svg {
+        margin-right: 0.35rem;
+        width: 0.9em;
+        height: 0.9em;
+    }
+    
+    .severity-high-badge { 
+        background-color: rgba(239, 68, 68, 0.1); 
+        color: #ef4444;
+    }
+    .severity-high-badge:hover {
+        background-color: rgba(239, 68, 68, 0.15);
+    }
+    
+    .severity-medium-badge { 
+        background-color: rgba(245, 158, 11, 0.1); 
+        color: #f59e0b;
+    }
+    .severity-medium-badge:hover {
+        background-color: rgba(245, 158, 11, 0.15);
+    }
+    
+    .severity-low-badge { 
+        background-color: rgba(59, 130, 246, 0.1); 
+        color: #3b82f6;
+    }
+    .severity-low-badge:hover {
+        background-color: rgba(59, 130, 246, 0.15);
+    }
+    
+    .severity-info-badge { 
+        background-color: rgba(107, 114, 128, 0.1); 
+        color: #9ca3af;
+    }
+    .severity-info-badge:hover {
+        background-color: rgba(107, 114, 128, 0.15);
+    }
+    
+    .progress-bar {
+        height: 8px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #00ff9d, #00e1ff);
+        transition: width 0.3s ease, background-color 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .progress-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.4) 50%,
+            rgba(255, 255, 255, 0) 100%
+        );
+        animation: shimmer 2s infinite linear;
+    }
+    
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+    
+    .progress-container {
+        margin-top: 1rem;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #00ff9d, #00d1ff);
+        width: 0%;
+        transition: width 0.3s ease;
+    }
+    
+    .result-item {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .result-item:hover {
+        transform: translateX(5px);
+        box-shadow: -5px 0 0 0 rgba(0, 255, 157, 0.5);
+    }
+    
+    .tooltip .tooltip-text {
+        visibility: hidden;
+        width: 200px;
+        background-color: #1f2937;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-b from-dark to-dark-800 pt-24 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">Démo <span class="text-primary">Scanner OWASP</span></h1>
+        <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+            Testez notre outil de scan de vulnérabilités OWASP et découvrez comment nous pouvons sécuriser vos applications web.
+        </p>
+    </div>
+</section>
+
+<!-- Demo Section -->
+<section class="py-12 bg-dark-800">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="scan-form rounded-2xl p-8 mb-12">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent inline-block">Analyse de Sécurité</h2>
+                <p class="mt-3 text-gray-400 max-w-2xl mx-auto">Vérifiez la sécurité de votre site web contre les vulnérabilités OWASP les plus courantes avec notre outil d'analyse avancé.</p>
+            </div>
+            
+            <form id="scanForm" method="POST" class="space-y-6">
+                <div class="space-y-2">
+                    <label for="target_url" class="block text-sm font-medium text-gray-300">URL du site à analyser</label>
+                    <div class="relative mt-1 rounded-lg shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                            </svg>
+                        </div>
+                        <div class="flex rounded-lg shadow-sm">
+                            <span class="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-dark-600 bg-dark-700 text-gray-300 text-sm">
+                                https://
+                            </span>
+                            <input type="text" name="target_url" id="target_url" 
+                                class="flex-1 min-w-0 block w-full px-3 py-3 rounded-none bg-dark-700 border-dark-600 text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent sm:text-sm transition duration-150 ease-in-out" 
+                                placeholder="votresite.com" 
+                                required
+                                pattern="^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$"
+                                title="Veuillez entrer un nom de domaine valide (ex: example.com)">
+                        </div>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-400">Analysez n'importe quel site web pour détecter les vulnérabilités de sécurité courantes</p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div class="w-full sm:w-auto">
+                        <button type="submit" id="scanButton" class="group relative w-full sm:w-auto flex justify-center items-center py-3 px-8 border border-transparent text-sm font-medium rounded-lg text-dark-900 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 transform hover:scale-105 shadow-lg shadow-primary/20">
+                            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                                <svg id="scanIcon" class="h-5 w-5 text-dark-900 group-hover:text-dark-800 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016" />
+                                </svg>
+                            </span>
+                            <span id="scanButtonText" class="font-bold">Lancer l'analyse de sécurité</span>
+                        </button>
+                    </div>
+                    
+                    <div id="scanProgress" class="hidden w-full sm:flex-1 bg-dark-700/50 rounded-lg p-4 border border-dark-600 transition-all duration-300">
+                        <div class="space-y-2 w-full">
+                            <div class="flex justify-between items-center">
+                                <span id="scanStatus" class="text-sm font-medium text-gray-300 flex items-center">
+                                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span>Analyse en cours...</span>
+                                </span>
+                                <span id="scanProgressText" class="text-xs font-mono bg-dark-800 text-primary px-2 py-1 rounded">0%</span>
+                            </div>
+                            <div class="w-full bg-dark-600 rounded-full h-2 overflow-hidden">
+                                <div id="progressBar" class="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-300 ease-out">
+                                    <div class="h-full w-full bg-white/30 animate-pulse"></div>
+                                </div>
+                            </div>
+                            <div id="scanStep" class="text-xs text-gray-400">Initialisation du scan...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="scanTips" class="mt-6 p-4 bg-dark-700/30 border border-dark-600 rounded-lg">
+                    <h4 class="text-sm font-medium text-gray-300 mb-2 flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Conseils pour une meilleure analyse :
+                    </h4>
+                    <ul class="text-xs text-gray-400 space-y-1 list-disc list-inside">
+                        <li>Assurez-vous que le site est accessible publiquement</li>
+                        <li>Vérifiez que vous avez l'autorisation de scanner le site cible</li>
+                        <li>Évitez de scanner des sites sensibles ou contenant des données privées</li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        
+        <div id="scanResults" class="scan-results">
+            <!-- Scan Results Header -->
+            <div class="bg-gradient-to-r from-dark-700/50 to-dark-800/50 border border-dark-600 rounded-2xl p-6 mb-8 shadow-lg">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+                    <div class="space-y-2">
+                        <h3 class="text-2xl font-bold text-white bg-clip-text bg-gradient-to-r from-primary to-accent inline-block">Résultats du scan de sécurité</h3>
+                        <div class="flex flex-wrap items-center gap-2 text-sm text-gray-400">
+                            <span>Analyse de <span id="scanTarget" class="font-medium text-primary">example.com</span></span>
+                            <span class="hidden sm:inline">•</span>
+                            <span>Terminé le <span id="scanDate" class="font-medium">01/01/2023 à 14:30</span></span>
+                            <span class="hidden sm:inline">•</span>
+                            <span>Durée : <span id="scanDuration" class="font-medium">2 min 45s</span></span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-3">
+                        <button id="exportPdfBtn" class="group relative flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 border border-dark-500 rounded-lg text-sm font-medium text-white bg-dark-700 hover:bg-dark-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200">
+                            <svg class="w-5 h-5 mr-2 text-primary group-hover:animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Exporter le rapport PDF
+                        </button>
+                        <button id="exportJsonBtn" class="group relative flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 border border-dark-500 rounded-lg text-sm font-medium text-white bg-dark-700 hover:bg-dark-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200">
+                            <svg class="w-5 h-5 mr-2 text-accent group-hover:animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                            </svg>
+                            Exporter en JSON
+                        </button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-dark-700 p-4 rounded-lg border-l-4 border-red-500">
+                        <div class="text-3xl font-bold text-red-400" id="highCount">0</div>
+                        <div class="text-sm text-gray-400">Critique</div>
+                    </div>
+                    <div class="bg-dark-700 p-4 rounded-lg border-l-4 border-yellow-500">
+                        <div class="text-3xl font-bold text-yellow-400" id="mediumCount">0</div>
+                        <div class="text-sm text-gray-400">Moyen</div>
+                    </div>
+                    <div class="bg-dark-700 p-4 rounded-lg border-l-4 border-blue-500">
+                        <div class="text-3xl font-bold text-blue-400" id="lowCount">0</div>
+                        <div class="text-sm text-gray-400">Faible</div>
+                    </div>
+                    <div class="bg-dark-700 p-4 rounded-lg border-l-4 border-gray-500">
+                        <div class="text-3xl font-bold text-gray-400" id="infoCount">0</div>
+                        <div class="text-sm text-gray-400">Information</div>
+                    </div>
+                </div>
+                
+                <!-- Security Score Card -->
+                <div class="bg-dark-800/50 border border-dark-600 rounded-xl p-6 mb-8">
+                    <h4 class="text-lg font-semibold text-white mb-6">Résumé de sécurité</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                        <div class="group relative bg-dark-700/50 hover:bg-dark-700/70 p-5 rounded-xl border border-dark-600 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+                            <div class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
+                                <span class="text-xs font-bold text-white" id="highCount">0</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="p-2 rounded-lg bg-red-500/10 text-red-500 mr-4">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold text-red-400">Haute</div>
+                                    <div class="text-xs text-gray-400">Risque critique</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="group relative bg-dark-700/50 hover:bg-dark-700/70 p-5 rounded-xl border border-dark-600 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+                            <div class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-yellow-500 flex items-center justify-center">
+                                <span class="text-xs font-bold text-white" id="mediumCount">0</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="p-2 rounded-lg bg-yellow-500/10 text-yellow-500 mr-4">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold text-yellow-400">Moyenne</div>
+                                    <div class="text-xs text-gray-400">Risque important</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="group relative bg-dark-700/50 hover:bg-dark-700/70 p-5 rounded-xl border border-dark-600 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+                            <div class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
+                                <span class="text-xs font-bold text-white" id="lowCount">0</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="p-2 rounded-lg bg-blue-500/10 text-blue-500 mr-4">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold text-blue-400">Basse</div>
+                                    <div class="text-xs text-gray-400">Risque modéré</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="group relative bg-dark-700/50 hover:bg-dark-700/70 p-5 rounded-xl border border-dark-600 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+                            <div class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-gray-500 flex items-center justify-center">
+                                <span class="text-xs font-bold text-white" id="infoCount">0</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="p-2 rounded-lg bg-gray-500/10 text-gray-400 mr-4">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold text-gray-400">Info</div>
+                                    <div class="text-xs text-gray-400">Informations</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-300">Niveau de sécurité global</span>
+                            <span class="text-sm font-medium text-primary" id="securityScore">0%</span>
+                        </div>
+                        <div class="w-full bg-dark-600 rounded-full h-2.5">
+                            <div id="securityScoreBar" class="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 h-2.5 rounded-full transition-all duration-1000 ease-out"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>Non sécurisé</span>
+                        </div>
+                        <div class="flex items-center text-gray-400">
+                            <span class="w-2 h-2 rounded-full bg-gray-500 mr-2"></span>
+                            <span id="infoCountBadge" class="font-medium">0</span> informations
+                        </div>
+                        <div class="ml-auto text-gray-400">
+                            <span id="vulnerabilityCount" class="font-medium text-white">0</span> vulnérabilités trouvées
+                        </div>
+                    </div>
+                    
+                    <!-- Vulnerabilities List -->
+                    <div class="divide-y divide-dark-600" id="vulnerabilitiesList">
+                        <!-- Les vulnérabilités seront ajoutées ici dynamiquement -->
+                        <div class="p-6 text-center text-gray-500" id="noVulnerabilitiesMessage">
+                            <svg class="mx-auto h-12 w-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <h3 class="mt-2 text-sm font-medium text-gray-300">Aucune vulnérabilité trouvée</h3>
+                            <p class="mt-1 text-xs text-gray-500">Les résultats de l'analyse s'afficheront ici.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading State -->
+                    <div id="vulnerabilitiesLoading" class="hidden p-8 text-center">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+                        <p class="mt-2 text-sm text-gray-400">Analyse en cours...</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+            
+            <div class="bg-dark-700/50 border border-dark-600 rounded-2xl p-6">
+                <h3 class="text-xl font-bold text-white mb-4">Recommandations de sécurité</h3>
+                <div id="recommendations" class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-6 w-6 text-primary">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="ml-3 text-gray-300">Mettez à jour votre logiciel vers la dernière version pour corriger les vulnérabilités connues.</p>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-6 w-6 text-primary">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="ml-3 text-gray-300">Implémentez une politique de sécurité du contenu (CSP) pour atténuer les attaques XSS.</p>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-6 w-6 text-primary">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="ml-3 text-gray-300">Activez le protocole HTTPS avec un certificat SSL/TLS valide pour chiffrer les données en transit.</p>
+                    </div>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-dark-600">
+                    <h4 class="font-medium text-gray-200 mb-4">Besoin d'aide pour sécuriser votre application ?</h4>
+                    <p class="text-gray-400 mb-4">Nos experts en cybersécurité peuvent vous aider à identifier et corriger les vulnérabilités de votre application.</p>
+            // Sample vulnerabilities data
+            vulnerabilities = [
+                {
+                    id: 'vuln-001',
+                    name: 'Injection SQL',
+                    description: 'Le site est vulnérable aux attaques par injection SQL via le paramètre de recherche.',
+                    severity: 'high',
+                    url: 'https://example.com/search?q=test',
+                    solution: 'Utilisez des requêtes paramétrées ou un ORM pour éviter les injections SQL.'
+                },
+                {
+                    id: 'vuln-002',
+                    name: 'Cross-Site Scripting (XSS) Réfléchi',
+                    description: 'Détection d\'une vulnérabilité XSS réfléchie dans le formulaire de contact.',
+                    severity: 'medium',
+                    url: 'https://example.com/contact',
+                    solution: 'Échappez correctement les entrées utilisateur et utilisez Content Security Policy (CSP).'
+                },
+                {
+                    id: 'vuln-003',
+                    name: 'En-têtes de sécurité manquants',
+                    description: 'En-têtes de sécurité HTTP importants manquants (X-Content-Type-Options, X-Frame-Options, etc.)',
+                    severity: 'low',
+                    url: 'https://example.com',
+                    solution: 'Ajoutez les en-têtes de sécurité HTTP recommandés.'
+                },
+                {
+                    id: 'vuln-004',
+                    name: 'Version du serveur exposée',
+                    description: 'La version du serveur web est exposée dans les en-têtes de réponse.',
+                    severity: 'info',
+                    url: 'https://example.com',
+                    solution: 'Configurez le serveur pour masquer les informations de version.'
+                }
+            ];
+            
+            // Initialize UI with sample data
+            updateVulnerabilityCounts();
+            renderVulnerabilities();
+            
+            // Update scan time and duration
+            if (scanTime) scanTime.textContent = new Date().toLocaleString('fr-FR');
+            if (scanDuration) scanDuration.textContent = '3 secondes';
+            
+            // Show results section
+            if (scanResults) scanResults.classList.remove('hidden');
+            if (scanProgress) scanProgress.classList.add('hidden');
+        }
+        
+        // Update vulnerability counters
+        function updateVulnerabilityCounts() {
+            const counts = {
+                high: 0,
+                medium: 0,
+                low: 0,
+                info: 0,
+                total: vulnerabilities.length
+            };
+            
+            vulnerabilities.forEach(vuln => {
+                const severity = vuln.severity?.toLowerCase();
+                if (counts.hasOwnProperty(severity)) {
+                    counts[severity]++;
+                }
+            });
+            
+            // Update UI
+            const highCountEl = document.getElementById('highCount');
+            const mediumCountEl = document.getElementById('mediumCount');
+            const lowCountEl = document.getElementById('lowCount');
+            const infoCountEl = document.getElementById('infoCount');
+            const totalCountEl = document.getElementById('vulnerabilityCount');
+            
+            if (highCountEl) highCountEl.textContent = counts.high;
+            if (mediumCountEl) mediumCountEl.textContent = counts.medium;
+            if (lowCountEl) lowCountEl.textContent = counts.low;
+            if (infoCountEl) infoCountEl.textContent = counts.info;
+            if (totalCountEl) totalCountEl.textContent = counts.total;
+            
+            // Update security score (simple calculation - can be enhanced)
+            const maxScore = counts.high * 10 + counts.medium * 5 + counts.low * 2 + counts.info * 1;
+            const totalPossible = Math.max(1, (counts.high + counts.medium + counts.low + counts.info) * 10);
+            const securityScore = Math.max(0, 100 - Math.min(100, (maxScore / totalPossible) * 100));
+            
+            const securityScoreEl = document.getElementById('securityScore');
+            const securityScoreBarEl = document.getElementById('securityScoreBar');
+            
+            if (securityScoreEl) securityScoreEl.textContent = `${Math.round(securityScore)}%`;
+            if (securityScoreBarEl) securityScoreBarEl.style.width = `${securityScore}%`;
+        }
+        
+        // Render vulnerabilities to the DOM
+        function renderVulnerabilities() {
+            if (!vulnerabilitiesList) return;
+            
+            if (vulnerabilities.length === 0) {
+                if (noVulnerabilitiesMessage) {
+                    noVulnerabilitiesMessage.classList.remove('hidden');
+                    vulnerabilitiesList.innerHTML = '';
+                    vulnerabilitiesList.appendChild(noVulnerabilitiesMessage);
+                }
+                return;
+            }
+            
+            if (noVulnerabilitiesMessage) {
+                noVulnerabilitiesMessage.classList.add('hidden');
+            }
+            
+            const fragment = document.createDocumentFragment();
+            
+            vulnerabilities.forEach(vuln => {
+                if (!vuln) return;
+                
+                const severity = vuln.severity?.toLowerCase() || 'info';
+                const severityColors = {
+                    'high': { bg: 'bg-red-900/30', border: 'border-red-800', text: 'text-red-400' },
+                    'medium': { bg: 'bg-yellow-900/30', border: 'border-yellow-800', text: 'text-yellow-400' },
+                    'low': { bg: 'bg-blue-900/30', border: 'border-blue-800', text: 'text-blue-400' },
+                    'info': { bg: 'bg-gray-800/30', border: 'border-gray-700', text: 'text-gray-400' }
+                };
+                
+                const colors = severityColors[severity] || severityColors.info;
+                const displaySeverity = severity.charAt(0).toUpperCase() + severity.slice(1);
+                
+                const vulnElement = document.createElement('div');
+                vulnElement.className = `p-5 hover:bg-dark-750/50 transition-colors border-l-4 ${colors.border} ${colors.bg}`;
+                
+                vulnElement.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors.text} bg-opacity-20 ${colors.border} border">
+                                    ${displaySeverity}
+                                </span>
+                                <h4 class="text-base font-medium text-white truncate">${vuln.name || 'Vulnérabilité inconnue'}</h4>
+                            </div>
+                            <p class="text-sm text-gray-300 mb-3">${vuln.description || 'Aucune description disponible.'}</p>
+                            <div class="text-xs text-gray-500 flex items-center">
+                                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                                </svg>
+                                <span class="truncate">${vuln.url || 'URL non spécifiée'}</span>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0 flex items-center gap-2">
+                            <button class="p-2 rounded-lg bg-dark-600 hover:bg-dark-500 text-gray-300 transition-colors" data-vuln-id="${vuln.id}" data-action="view-details" aria-label="Voir les détails" title="Voir les détails">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </button>
+                            <button class="p-2 rounded-lg bg-dark-600 hover:bg-dark-500 text-gray-300 transition-colors" data-vuln-id="${vuln.id}" data-action="export-vuln" aria-label="Exporter" title="Exporter">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                fragment.appendChild(vulnElement);
+            });
+            
+            vulnerabilitiesList.innerHTML = '';
+            vulnerabilitiesList.appendChild(fragment);
+            
+            // Add event listeners to the action buttons
+            document.querySelectorAll('[data-action="view-details"]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const vulnId = e.currentTarget.dataset.vulnId;
+                    const vuln = vulnerabilities.find(v => v.id === vulnId);
+                    if (vuln) {
+                        alert(`Détails de la vulnérabilité :\n\n${vuln.name}\n\n${vuln.description}\n\nSolution recommandée :\n${vuln.solution || 'Aucune solution spécifique fournie.'}`);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('[data-action="export-vuln"]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const vulnId = e.currentTarget.dataset.vulnId;
+                    const vuln = vulnerabilities.find(v => v.id === vulnId);
+                    if (vuln) {
+                        const vulnData = JSON.stringify(vuln, null, 2);
+                        const blob = new Blob([vulnData], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `vulnerabilite-${vulnId}.json`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }
+                });
+            });
+        }
+        
+    // Initialize the demo when the page loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeDemo);
+    } else {
+        initializeDemo();
+    }
+    
+    // Handle form submission
+    if (scanForm) {
+        scanForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const url = urlInput ? urlInput.value.trim() : '';
+            if (!url) {
+                alert('Veuillez entrer une URL valide');
+                return;
+            }
+            
+            // Disable the button and show loading state
+            if (scanButton) {
+                scanButton.disabled = true;
+                scanButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Analyse en cours...';
+            }
+            
+            // Show scan results section
+            if (scanResults) {
+                scanResults.style.display = 'block';
+            }
+            
+            // Simulate scan (in a real app, this would be an API call)
+            setTimeout(() => {
+                // Initialize with sample data
+                initializeDemo();
+            }, 2000);
+        });
+    }
+
+    // Helper function to format date
+    function formatDate(date) {
+        if (!date) return 'Inconnue';
+        
+        // Handle both Date objects and timestamps
+        const dateObj = date instanceof Date ? date : new Date(date);
+        
+        // Check if date is valid
+        if (isNaN(dateObj.getTime())) {
+            return 'Date invalide';
+        }
+        
+        const options = { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            timeZone: 'Europe/Paris'
+        };
+        
+        return dateObj.toLocaleDateString('fr-FR', options);
+    }
+    
+    // Helper function to escape HTML
+    function escapeHtml(unsafe) {
+        if (!unsafe) return '';
+        return unsafe
+            .toString()
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+    
+    // Helper function to get severity badge class
+    function getSeverityBadgeClass(severity) {
+        switch(severity?.toLowerCase()) {
+            case 'high': return 'bg-red-500/10 text-red-400';
+            case 'medium': return 'bg-yellow-500/10 text-yellow-400';
+            case 'low': return 'bg-blue-500/10 text-blue-400';
+            default: return 'bg-gray-500/10 text-gray-400';
+        }
+    }
+    
+    // Helper function to reset the scan button
+    function resetScanButton() {
+        scanButton.disabled = false;
+        scanButton.innerHTML = '<i class="fas fa-search mr-2"></i> Lancer le scan';
+    }
+    
+    // Helper function to show alert messages
+    function showAlert(message, type = 'info') {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg ${
+            type === 'error' ? 'bg-red-500/90 text-white' : 
+            type === 'success' ? 'bg-green-500/90 text-white' : 'bg-blue-500/90 text-white'
+        }`;
+        alertDiv.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas ${
+                    type === 'error' ? 'fa-exclamation-circle' : 
+                    type === 'success' ? 'fa-check-circle' : 'fa-info-circle'
+                } mr-2"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(alertDiv);
+        
+        // Remove alert after 5 seconds
+        setTimeout(() => {
+            alertDiv.style.opacity = '0';
+            setTimeout(() => {
+                document.body.removeChild(alertDiv);
+            }, 300);
+        }, 5000);
+    }
+    
+    // Start a new scan
+    function startScan(targetUrl) {
+        fetch('/demo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `target_url=${encodeURIComponent(targetUrl)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'started') {
+                currentScanId = data.scan_id;
+                // Start polling for scan status
+                pollScanStatus();
+            } else {
+                throw new Error('Failed to start scan');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('Une erreur est survenue lors du démarrage du scan', 'error');
+            resetScanButton();
+        });
+    }
+    
+    // Poll scan status
+    function pollScanStatus() {
+        if (!currentScanId) return;
+        
+        fetch(`/api/scan/status/${currentScanId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Update progress
+                const progress = data.progress || 0;
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `${progress}%`;
+                
+                if (data.status === 'completed' && data.results) {
+                    // Scan complete
+                    clearInterval(scanInterval);
+                    scanComplete(data.results);
+                } else if (data.status === 'failed') {
+                    throw new Error('Scan failed');
+                } else {
+                    // Continue polling
+                    scanInterval = setTimeout(pollScanStatus, 1000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                clearInterval(scanInterval);
+                showAlert('Une erreur est survenue lors du scan', 'error');
+                resetScanButton();
+            });
+    }
+    
+    // Handle scan completion
+    function scanComplete(scanData) {
+        // Enable form
+        resetScanButton();
+        
+        // Update scan summary
+        const scanDate = new Date(scanData.end_time * 1000 || new Date());
+        const vulnCounts = {
+            high: 0,
+            medium: 0,
+            low: 0,
+            info: 0
+        };
+        
+        // Count vulnerabilities by severity
+        scanData.vulnerabilities.forEach(vuln => {
+            const severity = vuln.severity?.toLowerCase() || 'info';
+            if (vulnCounts.hasOwnProperty(severity)) {
+                vulnCounts[severity]++;
+            } else {
+                vulnCounts.info++;
+            }
+        });
+        
+        // Show success message with vulnerability counts
+        scanSummary.innerHTML = `
+            <div class="flex items-center">
+                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                    <i class="fas fa-check text-green-500"></i>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-medium text-white">Scan terminé avec succès</h3>
+                    <p class="text-sm text-gray-400">${formatDate(scanDate)}</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="flex flex-wrap gap-2">
+                    ${vulnCounts.high > 0 ? `
+                        <div class="px-3 py-1.5 bg-red-500/10 rounded-lg">
+                            <p class="text-sm font-medium text-red-400">Haute: ${vulnCounts.high}</p>
+                        </div>
+                    ` : ''}
+                    ${vulnCounts.medium > 0 ? `
+                        <div class="px-3 py-1.5 bg-yellow-500/10 rounded-lg">
+                            <p class="text-sm font-medium text-yellow-400">Moyenne: ${vulnCounts.medium}</p>
+                        </div>
+                    ` : ''}
+                    ${vulnCounts.low > 0 ? `
+                        <div class="px-3 py-1.5 bg-blue-500/10 rounded-lg">
+                            <p class="text-sm font-medium text-blue-400">Basse: ${vulnCounts.low}</p>
+                        </div>
+                    ` : ''}
+                    ${vulnCounts.info > 0 ? `
+                        <div class="px-3 py-1.5 bg-gray-500/10 rounded-lg">
+                            <p class="text-sm font-medium text-gray-400">Info: ${vulnCounts.info}</p>
+                        </div>
+                    ` : ''}
+                    ${Object.values(vulnCounts).every(count => count === 0) ? `
+                        <div class="px-3 py-1.5 bg-green-500/10 rounded-lg">
+                            <p class="text-sm font-medium text-green-400">Aucune vulnérabilité critique trouvée</p>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+        
+        // Show report buttons
+        reportButtons.classList.remove('hidden');
+        
+        // Update report download links
+        jsonReportBtn.href = `/api/scan/${currentScanId}/report/json`;
+        pdfReportBtn.href = `/api/scan/${currentScanId}/report/pdf`;
+        
+        // Display vulnerabilities and recommendations
+        displayVulnerabilities(scanData.vulnerabilities);
+        showRecommendations(scanData.vulnerabilities);
+        
+        // Scroll to results
+        scanResults.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Show security recommendations based on vulnerabilities
+    function showRecommendations(vulnerabilities) {
+        // Clear existing recommendations
+        recommendationsList.innerHTML = '';
+        
+        // Track which recommendations we've already added
+        const addedRecommendations = new Set();
+        
+        // Add specific recommendations based on found vulnerabilities
+        if (vulnerabilities && vulnerabilities.length > 0) {
+            const vulnTypes = new Set(vulnerabilities.map(v => v.name || ''));
+            
+            // XSS recommendations
+            if (Array.from(vulnTypes).some(t => t.toLowerCase().includes('xss'))) {
+                addedRecommendations.add('Implémentez une politique de sécurité du contenu (CSP) pour atténuer les attaques XSS.');
+                addedRecommendations.add('Validez et échappez correctement toutes les entrées utilisateur avant de les afficher.');
+            }
+            
+            // SQL Injection recommendations
+            if (Array.from(vulnTypes).some(t => t.toLowerCase().includes('sql'))) {
+                addedRecommendations.add('Utilisez des requêtes paramétrées ou des ORM pour toutes les interactions avec la base de données.');
+                addedRecommendations.add('Appliquez le principe du moindre privilège aux comptes de base de données.');
+            }
+            
+            // Authentication issues
+            if (Array.from(vulnTypes).some(t => t.toLowerCase().includes('auth') || t.toLowerCase().includes('authentification'))) {
+                addedRecommendations.add('Mettez en place une authentification à deux facteurs pour les comptes privilégiés.');
+                addedRecommendations.add('Implémentez une politique de mot de passe forte et un verrouillage de compte après plusieurs échecs.');
+            }
+            
+            // Sensitive data exposure
+            if (Array.from(vulnTypes).some(t => t.toLowerCase().includes('sensitive') || t.toLowerCase().includes('données'))) {
+                addedRecommendations.add('Chiffrez les données sensibles au repos et en transit.');
+                addedRecommendations.add('Ne stockez pas d\'informations sensibles inutilement.');
+            }
+            
+            // Security headers
+            if (Array.from(vulnTypes).some(t => t.toLowerCase().includes('header') || t.toLowerCase().includes('en-tête'))) {
+                addedRecommendations.add('Configurez correctement les en-têtes de sécurité HTTP (HSTS, X-Content-Type-Options, X-Frame-Options, etc.).');
+            }
+        }
+        
+        // Add general recommendations if we don't have many specific ones
+        const generalRecommendations = [
+            'Mettez à jour régulièrement tous les logiciels et frameworks utilisés.',
+            'Utilisez HTTPS pour toutes les communications et activez HSTS.',
+            'Effectuez des audits de sécurité réguliers et des tests d\'intrusion.',
+            'Formez votre équipe aux bonnes pratiques de sécurité applicative (OWASP Top 10).',
+            'Mettez en place un système de gestion des vulnérabilités pour suivre et corriger les problèmes.'
+        ];
+        
+        // Add general recommendations until we have at least 5 total
+        let i = 0;
+        while (addedRecommendations.size < 5 && i < generalRecommendations.length) {
+            addedRecommendations.add(generalRecommendations[i]);
+            i++;
+        }
+        
+        // Add the recommendations to the page
+        addedRecommendations.forEach(rec => {
+            const li = document.createElement('li');
+            li.className = 'flex items-start';
+            li.innerHTML = `
+                <div class="flex-shrink-0 h-6 w-6 text-primary">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <p class="ml-3 text-gray-300">${rec}</p>
+            `;
+            recommendationsList.appendChild(li);
+        });
+    }
+    
+    // Display vulnerabilities in the UI
+    function displayVulnerabilities(vulnerabilities) {
+        vulnerabilitiesList.innerHTML = '';
+        
+        if (!vulnerabilities || vulnerabilities.length === 0) {
+            vulnerabilitiesList.innerHTML = `
+                <div class="text-center py-8">
+                    <i class="fas fa-shield-check text-4xl text-green-500 mb-4"></i>
+                    <p class="text-gray-300">Aucune vulnérabilité critique n'a été détectée.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Sort vulnerabilities by severity (high to low)
+        const severityOrder = { high: 3, medium: 2, low: 1, info: 0 };
+        vulnerabilities.sort((a, b) => {
+            return severityOrder[b.severity?.toLowerCase() || 'info'] - severityOrder[a.severity?.toLowerCase() || 'info'];
+        });
+        
+        vulnerabilities.forEach(vuln => {
+            const severity = vuln.severity?.toLowerCase() || 'info';
+            const severityInfo = {
+                class: '',
+                text: 'Info',
+                icon: 'info-circle'
+            };
+            
+            switch(severity) {
+                case 'high':
+                    severityInfo.class = 'bg-red-500/10 border-l-4 border-red-500';
+                    severityInfo.text = 'Haute';
+                    severityInfo.icon = 'exclamation-triangle';
+                    break;
+                case 'medium':
+                    severityInfo.class = 'bg-yellow-500/10 border-l-4 border-yellow-500';
+                    severityInfo.text = 'Moyenne';
+                    severityInfo.icon = 'exclamation-circle';
+                    break;
+                case 'low':
+                    severityInfo.class = 'bg-blue-500/10 border-l-4 border-blue-500';
+                    severityInfo.text = 'Basse';
+                    severityInfo.icon = 'info-circle';
+                    break;
+                default:
+                    severityInfo.class = 'bg-gray-500/10 border-l-4 border-gray-500';
+                    severityInfo.icon = 'info-circle';
+            }
+            
+            const vulnElement = document.createElement('div');
+            vulnElement.className = `result-item ${severityInfo.class} p-4 rounded-lg mb-4`;
+            vulnElement.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <div class="flex items-center">
+                            <i class="fas fa-${severityInfo.icon} mr-2 text-${severity}-500"></i>
+                            <h4 class="font-bold text-white">${vuln.name || 'Vulnérabilité détectée'}</h4>
+                        </div>
+                        <p class="text-sm text-gray-300 mt-1">${vuln.description || 'Aucune description disponible.'}</p>
+                        <div class="mt-2 flex flex-wrap gap-2">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getSeverityBadgeClass(severity)}">
+                                ${severityInfo.text}
+                            </span>
+                            ${vuln.url ? `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-700 text-gray-200">
+                                <i class="fas fa-link mr-1"></i> ${vuln.url}
+                            </span>` : ''}
+                            ${vuln.param ? `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-700 text-gray-200">
+                                <i class="fas fa-code mr-1"></i> ${vuln.param}
+                            </span>` : ''}
+                        </div>
+                    </div>
+                    <button class="text-gray-400 hover:text-white transition-colors ml-2" onclick="toggleVulnerabilityDetails(this)" aria-label="Afficher les détails">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="vulnerability-details mt-3 pt-3 border-t border-gray-700 hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h5 class="font-medium text-gray-300 mb-1">Solution recommandée :</h5>
+                            <p class="text-sm text-gray-400">${vuln.solution || 'Aucune solution spécifique disponible.'}</p>
+                        </div>
+                        <div>
+                            ${vuln.attack ? `
+                                <h5 class="font-medium text-gray-300 mb-1">Vecteur d'attaque :</h5>
+                                <code class="text-xs bg-gray-900 p-2 rounded block overflow-x-auto mb-2">${escapeHtml(vuln.attack)}</code>
+                            ` : ''}
+                            ${vuln.evidence ? `
+                                <h5 class="font-medium text-gray-300 mb-1">Preuve :</h5>
+                                <code class="text-xs bg-gray-900 p-2 rounded block overflow-x-auto">${escapeHtml(vuln.evidence)}</code>
+                            ` : ''}
+                        </div>
+                    </div>
+                    ${vuln.reference ? `
+                        <div class="mt-3">
+                            <a href="${vuln.reference}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 text-sm">
+                                <i class="fas fa-external-link-alt mr-1"></i> En savoir plus sur cette vulnérabilité
+                            </a>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            vulnerabilitiesList.appendChild(vulnElement);
+            
+            // Update counters
+            counts[vuln.severity]++;
+        });
+        
+        // Update counters display
+        highCount.textContent = counts.high;
+        mediumCount.textContent = counts.medium;
+        lowCount.textContent = counts.low;
+        infoCount.textContent = counts.info;
+    }
+    
+    // Toggle vulnerability details
+    function toggleVulnerabilityDetails(button) {
+        const details = button.closest('.result-item').querySelector('.vulnerability-details');
+        const icon = button.querySelector('i');
+        
+        if (details.classList.contains('hidden')) {
+            details.classList.remove('hidden');
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+            button.setAttribute('aria-expanded', 'true');
+        } else {
+            details.classList.add('hidden');
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+            button.setAttribute('aria-expanded', 'false');
+        }
+    }
+    
+    // Initialize the demo with sample data
+    function initializeDemo() {
+        // Sample vulnerabilities data
+        const sampleVulnerabilities = [
+            {
+                name: 'Cross-Site Scripting (XSS)',
+                description: 'Vulnérabilité XSS détectée dans le paramètre de recherche.',
+                severity: 'high',
+                url: '/search',
+                param: 'q',
+                solution: 'Valider et échapper correctement toutes les entrées utilisateur. Utiliser des fonctions comme encodeURIComponent() pour les données dans les URLs et innerText au lieu de innerHTML pour le contenu dynamique.',
+                attack: 'http://example.com/search?q=<script>alert(1)</script>',
+                evidence: 'Entrée utilisateur non échappée dans la sortie HTML',
+                reference: 'https://owasp.org/www-community/attacks/xss/'
+            },
+            {
+                name: 'Content Security Policy (CSP) Manquant',
+                description: 'En-tête Content-Security-Policy manquant.',
+                severity: 'medium',
+                solution: 'Implémenter une politique de sécurité du contenu (CSP) pour atténuer les attaques XSS.',
+                reference: 'https://developer.mozilla.org/fr/docs/Web/HTTP/CSP'
+            },
+            {
+                name: 'Cookie sans attribut Secure',
+                description: 'Cookies de session sans attribut Secure détectés.',
+                severity: 'low',
+                solution: 'Toujours définir l\'attribut Secure sur les cookies de session.'
+            },
+            {
+                name: 'Version du serveur exposée',
+                description: 'La version du serveur est exposée dans les en-têtes HTTP.',
+                severity: 'info',
+                solution: 'Désactiver l\'en-tête Server ou masquer les informations de version.'
+            }
+        ];
+        
+        // Display sample vulnerabilities
+        displayVulnerabilities(sampleVulnerabilities);
+        
+        // Show recommendations
+        showRecommendations(sampleVulnerabilities);
+        
+        // Update UI elements
+        if (scanResults) {
+            scanResults.style.display = 'block';
+            scanResults.classList.add('visible');
+        }
+        
+        if (scanProgress) {
+            scanProgress.classList.add('hidden');
+        }
+        
+        if (scanButton) {
+            resetScanButton();
+        }
+        
+        // Update scan summary
+        const scanDate = new Date();
+        if (scanSummary) {
+            scanSummary.innerHTML = `
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                        <i class="fas fa-check text-green-500"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-medium text-white">Démo initialisée avec des exemples</h3>
+                        <p class="text-sm text-gray-400">${formatDate(scanDate)}</p>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    // Add event listeners once the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize the demo
+        initializeDemo();
+        
+        // Add event delegation for dynamically created elements
+        document.addEventListener('click', function(e) {
+            // Handle vulnerability details toggle
+            if (e.target.closest('[data-action="toggle-details"]')) {
+                const button = e.target.closest('[data-action="toggle-details"]');
+                toggleVulnerabilityDetails(button);
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // DOM Elements
+    const scanForm = document.getElementById('scanForm');
+    const urlInput = document.getElementById('url');
+    const scanButton = document.getElementById('scanButton');
+    const scanResults = document.getElementById('scanResults');
+    const scanProgress = document.getElementById('scanProgress');
+    const scanStatus = document.getElementById('scanStatus');
+    const scanTime = document.getElementById('scanTime');
+    const scanDuration = document.getElementById('scanDuration');
+    const vulnerabilitiesList = document.getElementById('vulnerabilitiesList');
+    const noVulnerabilitiesMessage = document.getElementById('noVulnerabilitiesMessage');
+    const searchVulnerabilities = document.getElementById('searchVulnerabilities');
+    const recommendationsList = document.getElementById('recommendations');
+    
+    // State
+    let vulnerabilities = [];
+    let currentScanId = null;
+    let scanInterval = null;
+    let activeFilters = {
+        high: true,
+        medium: true,
+        low: true,
+        info: true
+    };
+    let currentSort = 'severity-desc';
+    let searchQuery = '';
+
+    // Update target URL in results
+    targetUrl.textContent = url;
+    
+    // Start the scan with the provided URL
+    startScan(url);
+});
+
+// Handle sort change
+sortBy.addEventListener('change', () => {
+    if (scanResults.classList.contains('visible')) {
+        displayVulnerabilities(sampleVulnerabilities);
+    }
+});
+
+// Handle download buttons
+downloadJson.addEventListener('click', () => {
+    alert('Fonctionnalité de téléchargement JSON sera implémentée bientôt !');
+});
+
+downloadPdf.addEventListener('click', () => {
+    alert('Fonctionnalité de téléchargement PDF sera implémentée bientôt !');
+});
+</script>
+{% endblock %}

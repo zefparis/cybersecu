@@ -1,0 +1,13 @@
+<nav class="fixed top-0 inset-x-0 z-50 bg-dark-800 border-b border-dark-600 backdrop-blur-lg">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+    <a href="{{ url_for('index') }}" class="text-xl font-bold text-white">CyberCrim</a>
+    <div class="space-x-4">
+      <a href="{{ url_for('index') }}" class="text-gray-300 hover:text-white">Accueil</a>
+      <a href="{{ url_for('tools') }}" class="text-gray-300 hover:text-white">Outils</a>
+      <a href="{{ url_for('demo') }}" class="text-gray-300 hover:text-white">Démo</a>
+      <a href="{{ url_for('certs') }}" class="text-gray-300 hover:text-white">Certifications</a>
+      <a href="{{ url_for('services') }}" class="text-gray-300 hover:text-white">Services</a>
+      <a href="{{ url_for('contact') }}" class="text-gray-300 hover:text-white">Contact</a>
+    </div>
+  </div>
+</nav>

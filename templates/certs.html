@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}CyberCrim – IA-Solution | Certifications{% endblock %}
+
+{% block head %}
+<style>
+    .cert-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .cert-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .cert-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+    }
+    
+    .badge-ejpt {
+        background-color: rgba(99, 102, 241, 0.1);
+        color: #6366f1;
+    }
+    
+    .badge-secnum {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .badge-rgpd {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+    
+    .cert-logo {
+        height: 80px;
+        width: auto;
+        margin-bottom: 1.5rem;
+        opacity: 0.9;
+        transition: opacity 0.3s ease;
+    }
+    
+    .cert-card:hover .cert-logo {
+        opacity: 1;
+    }
+    
+    .verification-link {
+        display: inline-flex;
+        align-items: center;
+        color: #00ff9d;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+    
+    .verification-link:hover {
+        color: #00d1ff;
+    }
+    
+    .verification-link svg {
+        margin-left: 0.25rem;
+        width: 1rem;
+        height: 1rem;
+    }
+    
+    .separator {
+        position: relative;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 157, 0.2), transparent);
+        margin: 3rem 0;
+    }
+    
+    .separator::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        background-color: #0e0e12;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #00ff9d;
+        font-size: 1.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-b from-dark to-dark-800 pt-24 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">Mes <span class="text-primary">Certifications</span></h1>
+        <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+            Découvrez mes certifications en cybersécurité qui attestent de mes compétences et de mon expertise dans le domaine.
+        </p>
+    </div>
+</section>
+
+<!-- Certifications Section -->
+<section class="py-16 bg-dark-800">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-1 gap-8">
+            <!-- eJPT -->
+            <div class="cert-card bg-dark-700/50 border border-dark-600 rounded-2xl p-8 relative overflow-hidden">
+                <div class="flex flex-col md:flex-row md:items-center">
+                    <div class="md:w-1/4 flex justify-center md:justify-start mb-6 md:mb-0">
+                        <img src="{{ url_for('static', filename='img/certs/ejpt.png') }}" alt="eLearnSecurity Junior Penetration Tester" class="cert-logo">
+                    </div>
+                    <div class="md:pl-8 md:border-l border-dark-600 md:w-3/4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-2xl font-bold text-white">eJPT (eLearnSecurity Junior Penetration Tester)</h3>
+                            <span class="badge-ejpt text-xs font-medium px-3 py-1 rounded-full">2023</span>
+                        </div>
+                        <p class="text-gray-400 mt-2">eLearnSecurity by INE</p>
+                        
+                        <p class="mt-4 text-gray-300">
+                            Certification en test d'intrusion de niveau junior couvrant les fondamentaux du pentesting, la méthodologie, les outils et techniques d'évaluation de la sécurité des systèmes et réseaux.
+                        </p>
+                        
+                        <div class="mt-6
+                        <div class="flex flex-wrap gap-4 mt-4">
+                            <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Pentesting</span>
+                            <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Évaluation de vulnérabilités</span>
+                            <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Outils d'audit</span>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <a href="https://www.credly.com/badges/example-ejpt" target="_blank" rel="noopener noreferrer" class="verification-link">
+                                Vérifier la certification
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="separator"></div>
+            
+            <!-- SecNumAcadémie -->
+            <div class="cert-card bg-dark-700/50 border border-dark-600 rounded-2xl p-8 relative overflow-hidden">
+                <div class="flex flex-col md:flex-row md:items-center">
+                    <div class="md:w-1/4 flex justify-center md:justify-start mb-6 md:mb-0">
+                        <img src="{{ url_for('static', filename='img/certs/secnum.png') }}" alt="SecNumAcadémie" class="cert-logo">
+                    </div>
+                    <div class="md:pl-8 md:border-l border-dark-600 md:w-3/4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-2xl font-bold text-white">SecNumAcadémie</h3>
+                            <span class="badge-secnum text-xs font-medium px-3 py-1 rounded-full">2022</span>
+                        </div>
+                        <p class="text-gray-400 mt-2">ANSSI (Agence Nationale de la Sécurité des Systèmes d'Information)</p>
+                        
+                        <p class="mt-4 text-gray-300">
+                            Formation en ligne de référence sur la cybersécurité proposée par l'ANSSI, couvrant les bonnes pratiques de sécurité informatique pour les professionnels et les particuliers.
+                        </p>
+                        
+                        <div class="flex flex-wrap gap-4 mt-4">
+                            <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Sécurité informatique</span>
+                            <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Bonnes pratiques</span>
+                            <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Sécurité des systèmes</span>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <a href="https://www.ssi.gouv.fr/" target="_blank" rel="noopener noreferrer" class="verification-link">
+                                En savoir plus
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="separator"></div>
+            
+            <!-- RGPD CNIL -->
+            <div class="cert-card bg-dark-700/50 border border-dark-600 rounded-2xl p-8 relative overflow-hidden">
+                <div class="flex flex-col md:flex-row md:items-center">
+                    <div class="md:w-1/4 flex justify-center md:justify-start mb-6 md:mb-0">
+                        <img src="{{ url_for('static', filename='img/certs/rgpd.png') }}" alt="RGPD" class="cert-logo">
+                    </div>
+                    <div class="md:pl-8 md:border-l border-dark-600 md:w-3/4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-2xl font-bold text-white">Certification RGPD</h3>
+                            <span class="badge-rgpd text-xs font-medium px-3 py-1 rounded-full">2021</span>
+                        </div>
+                        <p class="text-gray-400 mt-2">CNIL (Commission Nationale de l'Informatique et des Libertés)</p>
+                        
+                        <p class="mt-4 text-gray-300">
+                            Certification en conformité avec le Règlement Général sur la Protection des Données (RGPD), couvrant les aspects juridiques et techniques de la protection des données personnelles.
+                        </p>
+                        
+                        <div class="flex flex-wrap gap-4 mt-4">
+                            <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Protection des données</span>
+                            <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Conformité RGPD</span>
+                            <span class="px-3 py-1 bg-dark-600 text-xs rounded-full text-gray-300">Vie privée</span>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <a href="https://www.cnil.fr/" target="_blank" rel="noopener noreferrer" class="verification-link">
+                                En savoir plus
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-16 text-center">
+            <h3 class="text-2xl font-bold text-white mb-4">En cours d'obtention</h3>
+            <div class="flex flex-wrap justify-center gap-4">
+                <div class="px-4 py-2 bg-dark-600/50 border border-dark-500 rounded-full text-sm text-gray-300">OSCP (Offensive Security Certified Professional)</div>
+                <div class="px-4 py-2 bg-dark-600/50 border border-dark-500 rounded-full text-sm text-gray-300">CEH (Certified Ethical Hacker)</div>
+                <div class="px-4 py-2 bg-dark-600/50 border border-dark-500 rounded-full text-sm text-gray-300">CISSP (Certified Information Systems Security Professional)</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-16 bg-gradient-to-r from-dark-800 to-dark-900">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6">Vous avez des questions sur mes certifications ?</h2>
+        <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            N'hésitez pas à me contacter pour plus d'informations sur mes compétences et mon parcours professionnel en cybersécurité.
+        </p>
+        <a href="{{ url_for('contact') }}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-dark bg-primary hover:bg-primary/90 transition-colors">
+            Me contacter
+            <svg class="ml-2 -mr-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+            </svg>
+        </a>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add animation on scroll for certification cards
+    document.addEventListener('DOMContentLoaded', function() {
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.cert-card');
+            elements.forEach((element, index) => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.2;
+                
+                if (elementPosition < screenPosition) {
+                    setTimeout(() => {
+                        element.classList.add('animate-fadeInUp');
+                    }, 100 * index);
+                }
+            });
+        };
+        
+        // Run once on page load
+        window.addEventListener('load', animateOnScroll);
+        // Run on scroll
+        window.addEventListener('scroll', animateOnScroll);
+    });
+</script>
+{% endblock %}
